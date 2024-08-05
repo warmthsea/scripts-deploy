@@ -7,8 +7,8 @@ import chalk from 'chalk'
 import { Client } from 'ssh2'
 import { utilAwaitTime } from './utils'
 import type { ScriptsDeployOption } from './type'
-import { deleteWWWDirAllConetents, getSftp, readWWWDir } from './www-file'
-import { readLoaclDir } from './local-file'
+import { deleteWWWDirAllConetents, getSftp, readWWWDir } from './www-fs'
+import { readLoaclDir } from './local-fs'
 
 const { config } = await loadConfig<ScriptsDeployOption | undefined>({
   sources: [{
