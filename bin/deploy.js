@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
 import fs from 'node:fs'
-import path from 'node:path'
+import path, { dirname, resolve } from 'node:path'
 import process from 'node:process'
 import { exec } from 'node:child_process' // 确保导入 exec
+import { fileURLToPath } from 'node:url'
 import { Command } from 'commander'
 
 const program = new Command()
@@ -18,7 +19,6 @@ program
   .description('A simple deployment tool')
   .version('1.0.0')
 
-// 定义 init 命令
 program.command('init').description('Initialize the deployment configuration').action(() => {
   const configPath = path.join(rootDir, configFileName)
 
@@ -50,7 +50,11 @@ export default {
 })
 
 if (process.argv.length === 2) {
-  exec('npm run start', (error, stdout, stderr) => {
+  const __filename = fileURLToPath(import.meta.url)
+  const __dirname = dirname(__filename)
+  const fullPath = resolve(__dirname, '../dist/index.mjs')
+
+  exec(`node ${fullPath}`, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error executing script: ${error.message}`)
       return
