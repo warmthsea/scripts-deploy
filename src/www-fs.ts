@@ -1,4 +1,7 @@
-import type { Client, FileEntryWithStats, SFTPWrapper } from 'ssh2'
+/* eslint-disable no-async-promise-executor */
+import path from 'node:path'
+import type { Client, FileEntryWithStats, SFTPWrapper, Stats } from 'ssh2'
+import { getLoaclDirStat, readLoaclDir } from './local-fs'
 
 export function getSftp(client: Client) {
   return new Promise<SFTPWrapper>((resolve) => {
@@ -11,13 +14,57 @@ export function getSftp(client: Client) {
   })
 }
 
+export function getWWWDirStat(sftp: SFTPWrapper, wwwPath: string) {
+  return new Promise<Stats>((resolve) => {
+    sftp.stat(wwwPath, async (err, stats) => {
+      if (err)
+        throw err
+
+      resolve(stats)
+    })
+  })
+}
+
 export function readWWWDir(sftp: SFTPWrapper, wwwPath: string) {
   return new Promise<FileEntryWithStats[]>((resolve) => {
     sftp.readdir(wwwPath, (err, list) => {
-      if (err) {
+      if (err)
         throw err
-      }
+
       resolve(list)
+    })
+  })
+}
+
+export function createWWWDir(sftp: SFTPWrapper, remoteFilePath: string) {
+  return new Promise<void>((resolve) => {
+    sftp.mkdir(remoteFilePath, {}, (err) => {
+      if (err)
+        throw err
+
+      resolve()
+    })
+  })
+}
+
+export function deleteDir(sftp: SFTPWrapper, wwwPath: string) {
+  return new Promise<void>((resolve) => {
+    sftp.rmdir(wwwPath, (err) => {
+      if (err)
+        throw err
+
+      resolve()
+    })
+  })
+}
+
+export function deleteFile(sftp: SFTPWrapper, wwwFilePath: string) {
+  return new Promise<void>((resolve) => {
+    sftp.unlink(wwwFilePath, (err) => {
+      if (err)
+        throw err
+
+      resolve()
     })
   })
 }
@@ -26,32 +73,20 @@ export function deleteWWWDirAllConetents(sftp: SFTPWrapper, wwwPath: string, fil
   const deletePromises = fileList.map((file) => {
     const itemPath = `${wwwPath}/${file.filename}`
 
-    return new Promise<void>((resolve) => {
-      sftp.stat(itemPath, async (err, stats) => {
-        if (err) {
-          console.error(`Error checking path: ${err}`)
-        }
+    return new Promise<void>(async (resolve) => {
+      const stats = await getWWWDirStat(sftp, itemPath)
 
-        if (stats.isDirectory()) {
-          const list = await readWWWDir(sftp, itemPath)
-          await deleteWWWDirAllConetents(sftp, itemPath, list)
-          resolve()
-        }
+      if (stats.isDirectory()) {
+        const list = await readWWWDir(sftp, itemPath)
+        await deleteWWWDirAllConetents(sftp, itemPath, list)
+        await deleteDir(sftp, itemPath)
+        resolve()
+      }
 
-        if (stats.isFile()) {
-          console.log(`Deleted ${itemPath}`)
-          resolve()
-          // sftp.unlink(itemPath, (err) => {
-          //   if (err) {
-          //     throw err
-          //   }
-          //   else {
-          //     console.log(`Deleted ${file.filename}`)
-          //     resolve()
-          //   }
-          // })
-        }
-      })
+      if (stats.isFile()) {
+        await deleteFile(sftp, itemPath)
+        resolve()
+      }
     })
   })
 
@@ -59,5 +94,36 @@ export function deleteWWWDirAllConetents(sftp: SFTPWrapper, wwwPath: string, fil
     Promise.all(deletePromises).then(() => {
       resolve()
     })
+  })
+}
+
+export function uploadFiles(sftp: SFTPWrapper, localDir: string, wwwPath: string) {
+  return new Promise(async (resolve, reject) => {
+    const files = await readLoaclDir(localDir)
+
+    const uploadPromises = files.map((file) => {
+      const localFilePath = path.join(localDir, file)
+      const remoteFilePath = path.posix.join(wwwPath, file)
+
+      return new Promise<void>(async (resolve, reject) => {
+        const stats = await getLoaclDirStat(localFilePath)
+
+        if (stats.isDirectory()) {
+          await createWWWDir(sftp, remoteFilePath)
+          uploadFiles(sftp, localFilePath, remoteFilePath).then(() => resolve()).catch(reject)
+        }
+        else {
+          sftp.fastPut(localFilePath, remoteFilePath, (err) => {
+            if (err)
+              throw err
+            resolve()
+          })
+        }
+      })
+    })
+
+    Promise.all(uploadPromises)
+      .then(resolve)
+      .catch(reject)
   })
 }

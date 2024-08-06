@@ -1,6 +1,5 @@
+import type { Stats } from 'node:fs'
 import fs from 'node:fs'
-import path from 'node:path'
-import type { SFTPWrapper } from 'ssh2'
 
 export function readLoaclDir(localDir: string) {
   return new Promise<string[]>((resolve) => {
@@ -9,6 +8,17 @@ export function readLoaclDir(localDir: string) {
         throw err
 
       resolve(files)
+    })
+  })
+}
+
+export function getLoaclDirStat(localFilePath: string) {
+  return new Promise<Stats>((resolve) => {
+    fs.stat(localFilePath, async (err, stats) => {
+      if (err)
+        throw err
+
+      resolve(stats)
     })
   })
 }

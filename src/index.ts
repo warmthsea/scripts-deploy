@@ -1,5 +1,4 @@
 import process from 'node:process'
-import fs from 'node:fs'
 import path from 'node:path'
 import { loadConfig } from 'unconfig'
 import ora from 'ora'
@@ -7,8 +6,7 @@ import chalk from 'chalk'
 import { Client } from 'ssh2'
 import { utilAwaitTime } from './utils'
 import type { ScriptsDeployOption } from './type'
-import { deleteWWWDirAllConetents, getSftp, readWWWDir } from './www-fs'
-import { readLoaclDir } from './local-fs'
+import { deleteWWWDirAllConetents, getSftp, readWWWDir, uploadFiles } from './www-fs'
 
 const { config } = await loadConfig<ScriptsDeployOption | undefined>({
   sources: [{
@@ -36,7 +34,7 @@ else {
 
 spinner.start(`Start connect ${chalk.blue('SSH')}`)
 
-await utilAwaitTime(1000)
+await utilAwaitTime(800)
 
 const client = new Client()
 
@@ -55,10 +53,13 @@ client.connect({
     spinner.succeed('Delete Success All')
 
     const localDir = path.join(rootDir, config.rootDir)
-    console.log(localDir)
+    spinner.start(`Upload Files`)
 
-    const loaclList = await readLoaclDir(localDir)
-    console.log(loaclList)
+    await utilAwaitTime(800)
+    await uploadFiles(sftp, localDir, config.wwwPath)
+
+    spinner.succeed('Upload Success All')
+    process.exit()
   }
   catch (error) {
     console.log(error)
