@@ -59,10 +59,12 @@ client.connect({
     await uploadFiles(sftp, localDir, config.wwwPath)
 
     spinner.succeed('Upload Success All')
+    client.end()
     process.exit()
   }
   catch (error) {
     console.log(error)
+    client.end()
   }
 }).on('error', (error) => {
   spinner.fail(error.message)
