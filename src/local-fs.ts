@@ -5,7 +5,7 @@ export function readLoaclDir(localDir: string) {
   return new Promise<string[]>((resolve) => {
     fs.readdir(localDir, (err, files) => {
       if (err)
-        throw err
+        throw new Error(`read ${localDir} error`)
 
       resolve(files)
     })
