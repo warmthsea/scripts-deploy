@@ -11,7 +11,7 @@ Use scripts to quick deploy your build files.
 ## 📦 Install
 
 ```shell
-pnpm i scripts-deploy -D 
+pnpm i scripts-deploy -D
 ```
 
 If install warning, you can use `pnpm i scripts-deploy -D --ignore-scripts`
@@ -25,7 +25,6 @@ deploy init
 
 ![screenshots](https://github.com/user-attachments/assets/2c67bce4-89a2-4ac4-9e0f-919e3b9599cd)
 
-
 <details>
   <summary>Show examples</summary>
 
@@ -36,7 +35,7 @@ export default {
   username: 'xxx',
   password: 'xxx',
   wwwPath: '/usr/xxx/xxx',
-  rootDir: '/dist'
+  rootDir: '/dist',
   confirm: true
 }
 ```
@@ -62,7 +61,6 @@ export interface ScriptsDeployOption {
   /** Confirm execution */
   confirm?: boolean
 }
-
 ```
 
 [See file](https://github.com/warmthsea/scripts-deploy/blob/main/src/type.ts)
@@ -75,7 +73,6 @@ deploy
 ```
 
 ![screenshots](https://github.com/user-attachments/assets/226db360-02d0-4dc7-a323-bda3683bedf8)
-
 
 ## License
 
