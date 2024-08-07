@@ -5,4 +5,5 @@ export interface ScriptsDeployOption {
   password: string
   wwwPath: string
   rootDir: string
+  default?: Omit<ScriptsDeployOption, 'default'>
 }

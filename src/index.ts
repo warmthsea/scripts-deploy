@@ -8,12 +8,14 @@ import { utilAwaitTime } from './utils'
 import type { ScriptsDeployOption } from './type'
 import { deleteWWWDirAllConetents, getSftp, readWWWDir, uploadFiles } from './www-fs'
 
-const { config } = await loadConfig<ScriptsDeployOption | undefined>({
+const { config: _config } = await loadConfig<ScriptsDeployOption | undefined>({
   sources: [{
     files: 'deploy.config',
     extensions: ['ts', 'mts', 'cts', 'js', 'mjs', 'cjs', 'json', ''],
   }],
 })
+
+const config = _config?.default || _config
 
 const rootDir = process.cwd()
 const spinner = ora()
@@ -24,7 +26,7 @@ if (!config) {
 }
 
 spinner.start('Start load')
-if (config.host && config.port && config.username && config.password && config.wwwPath) {
+if (config.host && config.port && config.username && config.password && config.wwwPath && config.rootDir) {
   spinner.succeed('Check user config success')
 }
 else {
