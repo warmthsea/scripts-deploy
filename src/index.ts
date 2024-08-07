@@ -4,6 +4,7 @@ import { loadConfig } from 'unconfig'
 import ora from 'ora'
 import chalk from 'chalk'
 import { Client } from 'ssh2'
+import { confirm } from '@inquirer/prompts'
 import { utilAwaitTime } from './utils'
 import type { ScriptsDeployOption } from './type'
 import { deleteWWWDirAllConetents, getSftp, readWWWDir, uploadFiles } from './www-fs'
@@ -34,6 +35,14 @@ else {
   process.exit()
 }
 
+if (config.confirm === undefined || config.confirm) {
+  const answer = await confirm({ message: 'Confirm execution?' })
+
+  if (!answer) {
+    process.exit()
+  }
+}
+
 spinner.start(`Start connect ${chalk.blue('SSH')}`)
 
 await utilAwaitTime(800)
@@ -52,16 +61,17 @@ client.connect({
 
     const list = await readWWWDir(sftp, config.wwwPath)
     await deleteWWWDirAllConetents(sftp, config.wwwPath, list)
-    spinner.succeed('Delete Success All')
+    spinner.succeed('Delete success all')
 
     const localDir = path.join(rootDir, config.rootDir)
-    spinner.start(`Upload Files`)
+    spinner.start(`Upload files`)
 
     await utilAwaitTime(800)
     await uploadFiles(sftp, localDir, config.wwwPath)
 
-    spinner.succeed('Upload Success All')
+    spinner.succeed('Upload success all')
     client.end()
+    spinner.succeed('Client end')
     process.exit()
   }
   catch (error) {
