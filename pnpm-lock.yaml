@@ -7,6 +7,28 @@ settings:
 importers:
 
   .:
+    dependencies:
+      chalk:
+        specifier: ^5.3.0
+        version: 5.3.0
+      commander:
+        specifier: ^12.1.0
+        version: 12.1.0
+      net:
+        specifier: ^1.0.2
+        version: 1.0.2
+      ora:
+        specifier: ^8.0.1
+        version: 8.0.1
+      process:
+        specifier: ^0.11.10
+        version: 0.11.10
+      ssh2:
+        specifier: ^1.15.0
+        version: 1.15.0
+      unconfig:
+        specifier: ^0.4.5
+        version: 0.4.5
     devDependencies:
       '@antfu/eslint-config':
         specifier: ^2.23.0
@@ -29,12 +51,6 @@ importers:
       bumpp:
         specifier: ^9.4.1
         version: 9.4.1
-      chalk:
-        specifier: ^5.3.0
-        version: 5.3.0
-      commander:
-        specifier: ^12.1.0
-        version: 12.1.0
       eslint:
         specifier: ^9.7.0
         version: 9.7.0
@@ -44,33 +60,18 @@ importers:
       lint-staged:
         specifier: ^15.2.7
         version: 15.2.7
-      net:
-        specifier: ^1.0.2
-        version: 1.0.2
-      ora:
-        specifier: ^8.0.1
-        version: 8.0.1
       pnpm:
         specifier: ^9.1.3
         version: 9.5.0
-      process:
-        specifier: ^0.11.10
-        version: 0.11.10
       simple-git-hooks:
         specifier: ^2.11.1
         version: 2.11.1
-      ssh2:
-        specifier: ^1.15.0
-        version: 1.15.0
       typescript:
         specifier: ^5.5.3
         version: 5.5.3
       unbuild:
         specifier: ^2.0.0
         version: 2.0.0(typescript@5.5.3)
-      unconfig:
-        specifier: ^0.4.5
-        version: 0.4.5
       vite:
         specifier: ^5.3.4
         version: 5.3.4(@types/node@20.14.11)
