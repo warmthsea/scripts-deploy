@@ -1,7 +1,7 @@
 {
   "name": "scripts-deploy",
   "type": "module",
-  "version": "0.0.16",
+  "version": "0.1.0",
   "packageManager": "pnpm@9.1.3",
   "description": "Use scripts to quick deploy your build files.",
   "author": "Warmthsea",
