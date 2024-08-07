@@ -3,7 +3,7 @@
 import fs from 'node:fs'
 import path, { dirname, resolve } from 'node:path'
 import process from 'node:process'
-import { exec } from 'node:child_process' // 确保导入 exec
+import { spawn } from 'node:child_process' // 确保导入 exec
 import { fileURLToPath } from 'node:url'
 import { Command } from 'commander'
 
@@ -54,17 +54,7 @@ if (process.argv.length === 2) {
   const __dirname = dirname(__filename)
   const fullPath = resolve(__dirname, '../dist/index.mjs')
 
-  exec(`node ${fullPath}`, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Error executing script: ${error.message}`)
-      return
-    }
-    if (stderr) {
-      console.error(`Script error: ${stderr}`)
-      return
-    }
-    console.log(stdout)
-  })
+  runNodeScript(fullPath)
 }
 else {
   program.parse(process.argv)
@@ -90,4 +80,19 @@ function addToGitignore() {
   else {
     console.log('.gitignore does not exist.')
   }
+}
+
+function runNodeScript(fullPath) {
+  return new Promise((resolve, reject) => {
+    const child = spawn('node', [fullPath], { stdio: 'inherit' })
+
+    child.on('close', (code) => {
+      if (code === 0) {
+        resolve()
+      }
+      else {
+        reject(new Error(`Node.js script exited with code ${code}`))
+      }
+    })
+  })
 }
