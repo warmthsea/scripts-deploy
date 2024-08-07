@@ -30,7 +30,7 @@ export default {
   username: 'xxx',
   password: 'xxx',
   wwwPath: '/usr/xxx/xxx',
-  rootDir: '/dist'
+  rootDir: '/dist',
   confirm: true
 };\n`
 
