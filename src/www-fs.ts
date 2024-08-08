@@ -101,11 +101,8 @@ export function deleteWWWDirAllConetents(sftp: SFTPWrapper, wwwPath: string, fil
 export function sendLocaWWWfile(sftp: SFTPWrapper, localFilePath: string, remoteFilePath: string) {
   return new Promise<void>((resolve) => {
     sftp.fastPut(localFilePath, remoteFilePath, async (err) => {
-      if (err) {
-        console.log(localFilePath)
-        console.log(remoteFilePath)
+      if (err)
         throw err
-      }
 
       resolve()
     })
