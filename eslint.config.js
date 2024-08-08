@@ -7,6 +7,7 @@ export default antfu(
     rules: {
       'no-console': 'off',
       'ts/explicit-function-return-type': 'off',
+      'no-async-promise-executor': 'off',
     },
   },
 )

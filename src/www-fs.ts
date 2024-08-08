@@ -1,4 +1,3 @@
-/* eslint-disable no-async-promise-executor */
 import path from 'node:path'
 import type { Client, FileEntryWithStats, SFTPWrapper, Stats } from 'ssh2'
 import type { Ora } from 'ora'
