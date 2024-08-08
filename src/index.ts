@@ -22,7 +22,7 @@ const rootDir = process.cwd()
 const spinner = ora()
 
 if (!config) {
-  spinner.fail('deploy.config is not defined')
+  spinner.fail('deploy.config is not defined, please run `deploy init` create')
   process.exit()
 }
 
