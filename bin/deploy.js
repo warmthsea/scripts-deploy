@@ -31,8 +31,8 @@ export default {
   password: 'xxx',
   wwwPath: '/usr/xxx/xxx',
   rootDir: '/dist',
-  confirm: true
-};\n`
+  confirm: true,
+}\n`
 
     fs.writeFile(configPath, configContent, (err) => {
       if (err) {
