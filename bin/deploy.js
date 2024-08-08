@@ -11,7 +11,7 @@ const program = new Command()
 const rootDir = process.cwd()
 const gitignorePath = path.join(rootDir, '.gitignore')
 
-const configFileName = 'deploy.config.js'
+const configFileName = 'deploy.config.mjs'
 const gitignoreFileName = 'deploy.config'
 
 program
