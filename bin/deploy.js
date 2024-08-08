@@ -3,7 +3,7 @@
 import fs from 'node:fs'
 import path, { dirname, resolve } from 'node:path'
 import process from 'node:process'
-import { spawn } from 'node:child_process' // 确保导入 exec
+import { spawn } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { Command } from 'commander'
 
@@ -23,7 +23,7 @@ program.command('init').description('Initialize the deployment configuration').a
   const configPath = path.join(rootDir, configFileName)
 
   if (!fs.existsSync(configPath)) {
-    const configContent = `// Deployment configuration
+    const configContent = `// Deployment configuration https://github.com/warmthsea/scripts-deploy/blob/main/src/type.ts
 export default {
   host: '192.xxx',
   port: 10022,
