@@ -67,7 +67,7 @@ client.connect({
     spinner.start(`Upload files`)
 
     await utilAwaitTime(800)
-    await uploadFiles(sftp, localDir, config.wwwPath)
+    await uploadFiles(spinner, sftp, localDir, config.wwwPath)
 
     spinner.succeed('Upload success all')
     client.end()
