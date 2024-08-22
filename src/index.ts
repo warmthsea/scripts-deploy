@@ -5,7 +5,7 @@ import ora from 'ora'
 import chalk from 'chalk'
 import { Client } from 'ssh2'
 import { confirm } from '@inquirer/prompts'
-import { utilAwaitTime } from './utils'
+import { utilCountTime } from './utils'
 import type { ScriptsDeployOption } from './type'
 import { deleteWWWDirAllConetents, getSftp, readWWWDir, uploadFiles } from './www-fs'
 
@@ -45,7 +45,8 @@ if (config.confirm === undefined || config.confirm) {
 
 spinner.start(`Start connect ${chalk.blue('SSH')}`)
 
-await utilAwaitTime(800)
+const timeCount = utilCountTime()
+timeCount.start()
 
 const client = new Client()
 
@@ -66,12 +67,15 @@ client.connect({
     const localDir = path.join(rootDir, config.rootDir)
     spinner.start(`Upload files`)
 
-    await utilAwaitTime(800)
     await uploadFiles(spinner, sftp, localDir, config.wwwPath)
 
     spinner.succeed('Upload success all')
     client.end()
     spinner.succeed('Client end')
+
+    timeCount.end()
+    spinner.succeed(`Use time: ${chalk.yellow(timeCount.getTimeCount())}`)
+
     process.exit()
   }
   catch (error) {
