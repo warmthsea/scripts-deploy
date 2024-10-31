@@ -59,6 +59,8 @@ export interface ScriptsDeployOption {
   rootDir: string
   /** Confirm execution */
   confirm?: boolean
+  /** Number of concurrent uploads, Default is 20  */
+  limit?: number
 }
 ```
 

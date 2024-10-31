@@ -67,7 +67,7 @@ client.connect({
     const localDir = path.join(rootDir, config.rootDir)
     spinner.start(`Upload files`)
 
-    await uploadFiles(spinner, sftp, localDir, config.wwwPath)
+    await uploadFiles(spinner, sftp, localDir, config.wwwPath, config.limit)
 
     spinner.succeed('Upload success all')
     client.end()

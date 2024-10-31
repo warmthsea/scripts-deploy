@@ -1,6 +1,7 @@
 import path from 'node:path'
 import type { Client, FileEntryWithStats, SFTPWrapper, Stats } from 'ssh2'
 import type { Ora } from 'ora'
+import pLimit from 'p-limit'
 import { getLoaclDirStat, readLoaclDir } from './local-fs'
 
 export function getSftp(client: Client) {
@@ -108,23 +109,32 @@ export function sendLocaWWWfile(sftp: SFTPWrapper, localFilePath: string, remote
   })
 }
 
-export async function uploadFiles(spinner: Ora, sftp: SFTPWrapper, localDir: string, wwwPath: string) {
-  const files = await readLoaclDir(localDir)
+export async function uploadFiles(spinner: Ora, sftp: SFTPWrapper, _localDir: string, _wwwPath: string, _limit = 15) {
+  const limit = pLimit(_limit)
 
-  for (const [index, file] of files.entries()) {
-    const localFilePath = path.join(localDir, file)
-    const remoteFilePath = path.posix.join(wwwPath, file)
+  await uploadItemFile(_localDir, _wwwPath)
 
-    const stats = await getLoaclDirStat(localFilePath)
+  async function uploadItemFile(localDir: string, wwwPath: string) {
+    const files = await readLoaclDir(localDir)
+    const uploadPromises = files.map((file, index) => {
+      const localFilePath = path.join(localDir, file)
+      const remoteFilePath = path.posix.join(wwwPath, file)
 
-    if (stats.isDirectory()) {
-      await createWWWDir(sftp, remoteFilePath)
-      spinner.start(`Create folder ${localFilePath}`)
-      await uploadFiles(spinner, sftp, localFilePath, remoteFilePath)
-    }
-    else {
-      await sendLocaWWWfile(sftp, localFilePath, remoteFilePath)
-      spinner.start(`Upload files [${index + 1}/${files.length}] ${localFilePath}`)
-    }
+      return limit(async () => {
+        const stats = await getLoaclDirStat(localFilePath)
+
+        if (stats.isDirectory()) {
+          spinner.start(`Create folder ${localFilePath}`)
+          await createWWWDir(sftp, remoteFilePath)
+          await uploadItemFile(localFilePath, remoteFilePath)
+        }
+        else {
+          spinner.start(`Upload files [${index + 1}/${files.length}] ${localFilePath}`)
+          await sendLocaWWWfile(sftp, localFilePath, remoteFilePath)
+        }
+      })
+    })
+
+    await Promise.all(uploadPromises)
   }
 }
